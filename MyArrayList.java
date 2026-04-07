@@ -23,9 +23,19 @@ public class MyArrayList<T> implements MyList<T> {
 
     @Override
     public void add(T element) {
+
         ensureCapacity();
         elements[size++] = element;
     }
+    public void add(int index, T element) {
+     if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+     ensureCapacity();
+     for (int i = size; i > index; i--) {
+         elements[i] = elements[i - 1];
+    }
+     elements[index] = element;
+      size++;
+}
 
     @Override
     @SuppressWarnings("unchecked")
