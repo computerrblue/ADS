@@ -1,117 +1,148 @@
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class MyArrayList<T> implements MyList<T> {
-    private Object[] elements;  // Array to hold elements
-    private int size;           // Number of elements in list
-    private static final int DEFAULT_CAPACITY = 10;
+    private Object[] data;
+    private int size;
 
-    // Constructor
     public MyArrayList() {
-        elements = new Object[DEFAULT_CAPACITY];
+        data = new Object[10];
         size = 0;
     }
 
-    // Ensure capacity
     private void ensureCapacity() {
-        if (size == elements.length) {
-            Object[] newArray = new Object[elements.length * 2];
-            System.arraycopy(elements, 0, newArray, 0, elements.length);
-            elements = newArray;
+        if (size == data.length) {
+            Object[] newData = new Object[data.length * 2];
+            for (int i = 0; i < size; i++) {
+                newData[i] = data[i];
+            }
+            data = newData;
         }
     }
 
-    @Override
-    public void add(T element) {
+    public void add(T item) {
+        addLast(item);
+    }
 
+    public void addLast(T item) {
         ensureCapacity();
-        elements[size++] = element;
+        data[size++] = item;
     }
-    public void add(int index, T element) {
-     if (index < 0 || index > size) throw new IndexOutOfBoundsException();
-     ensureCapacity();
-     for (int i = size; i > index; i--) {
-         elements[i] = elements[i - 1];
-    }
-     elements[index] = element;
-      size++;
-}
 
-    @Override
-    @SuppressWarnings("unchecked")
+    public void addFirst(T item) {
+        add(0, item);
+    }
+
+    public void add(int index, T item) {
+        checkIndexForAdd(index);
+        ensureCapacity();
+        for (int i = size; i > index; i--) {
+            data[i] = data[i - 1];
+        }
+        data[index] = item;
+        size++;
+    }
+
+    public void set(int index, T item) {
+        checkIndex(index);
+        data[index] = item;
+    }
+
     public T get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index out of range: " + index);
-        }
-        return (T) elements[index];
+        checkIndex(index);
+        return (T) data[index];
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public T remove(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index out of range: " + index);
-        }
-        T removed = (T) elements[index];
-        int numMoved = size - index - 1;
-        if (numMoved > 0) {
-            System.arraycopy(elements, index + 1, elements, index, numMoved);
-        }
-        elements[--size] = null; // Help garbage collection
-        return removed;
+    public T getFirst() {
+        return get(0);
     }
 
-    @Override
+    public T getLast() {
+        return get(size - 1);
+    }
+
+    public void remove(int index) {
+        checkIndex(index);
+        for (int i = index; i < size - 1; i++) {
+            data[i] = data[i + 1];
+        }
+        size--;
+    }
+
+    public void removeFirst() {
+        remove(0);
+    }
+
+    public void removeLast() {
+        remove(size - 1);
+    }
+
+    public void clear() {
+        size = 0;
+    }
+
     public int size() {
         return size;
     }
 
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    @Override
-    public void clear() {
+    public int indexOf(Object o) {
         for (int i = 0; i < size; i++) {
-            elements[i] = null;
-        }
-        size = 0;
-    }
-
-    @Override
-    public boolean contains(T element) {
-        return indexOf(element) != -1;
-    }
-
-    @Override
-    public int indexOf(T element) {
-        for (int i = 0; i < size; i++) {
-            if ((elements[i] == null && element == null) || (elements[i] != null && elements[i].equals(element))) {
-                return i;
-            }
+            if (data[i].equals(o)) return i;
         }
         return -1;
     }
 
-    @Override
+    public int lastIndexOf(Object o) {
+        for (int i = size - 1; i >= 0; i--) {
+            if (data[i].equals(o)) return i;
+        }
+        return -1;
+    }
+
+    public boolean exists(Object o) {
+        return indexOf(o) != -1;
+    }
+
+    public Object[] toArray() {
+        Object[] arr = new Object[size];
+        for (int i = 0; i < size; i++) arr[i] = data[i];
+        return arr;
+    }
+
+    public void sort() {
+        // simple bubble sort (no java.util allowed)
+        for (int i = 0; i < size - 1; i++) {
+            for (int j = 0; j < size - i - 1; j++) {
+                Comparable a = (Comparable) data[j];
+                Comparable b = (Comparable) data[j + 1];
+                if (a.compareTo(b) > 0) {
+                    Object temp = data[j];
+                    data[j] = data[j + 1];
+                    data[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size)
+            throw new IndexOutOfBoundsException();
+    }
+
+    private void checkIndexForAdd(int index) {
+        if (index < 0 || index > size)
+            throw new IndexOutOfBoundsException();
+    }
+
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            private int current = 0;
+            int cursor = 0;
 
-
-            @Override
             public boolean hasNext() {
-                return current < size;
+                return cursor < size;
             }
 
-            @Override
-            @SuppressWarnings("unchecked")
             public T next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                return (T) elements[current++];
+                return (T) data[cursor++];
             }
         };
     }

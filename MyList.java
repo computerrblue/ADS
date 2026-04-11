@@ -1,11 +1,21 @@
-public interface MyList<T> {
-    void add(T element);          // Add element to the end
-    T get(int index);             // Get element at index
-    T remove(int index);          // Remove element at index
-    int size();                   // Return the number of elements
-    boolean isEmpty();            // Check if the list is empty
-    void clear();                 // Remove all elements
-    boolean contains(T element);  // Check if element exists
-    int indexOf(T element);       // Return index of element or -1
-    java.util.Iterator<T> iterator(); // Return an iterator
+
+public interface MyList<T> extends Iterable<T> {
+    void add(T item);
+    void set(int index, T item);
+    void add(int index, T item);
+    void addFirst(T item);
+    void addLast(T item);
+    T get(int index);
+    T getFirst();
+    T getLast();
+    void remove(int index);
+    void removeFirst();
+    void removeLast();
+    void sort();
+    int indexOf(Object object);
+    int lastIndexOf(Object object);
+    boolean exists(Object object);
+    Object[] toArray();
+    void clear();
+    int size();
 }

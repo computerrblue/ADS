@@ -1,31 +1,21 @@
 public class MyStack<T> {
-    private MyArrayList<T> list;
+    private MyArrayList<T> list = new MyArrayList<>();
 
-    
-    public MyStack(){
-
-        list = new MyArrayList<>();
+    public void push(T item) {
+        list.addLast(item);
     }
 
-    public void push(T element){
-        list.add(element);
+    public T pop() {
+        T val = list.getLast();
+        list.removeLast();
+        return val;
     }
 
-    public T pop(){
-    if(isEmpty())throw new RuntimeException("Stack Empty");
-    return list.remove(list.size() - 1);
+    public T peek() {
+        return list.getLast();
     }
 
-    public T peek(){
-     if(isEmpty())throw new RuntimeException("Stack Empty");
-    return list.get(list.size() - 1);
+    public boolean isEmpty() {
+        return list.size() == 0;
     }
-    public boolean isEmpty(){
-        return list.isEmpty();
-    }
-    public int size(){
-        return list.size();
-    }
-
-
 }
